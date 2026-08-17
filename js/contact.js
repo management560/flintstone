@@ -81,35 +81,92 @@ document.addEventListener("DOMContentLoaded", function () {
   overlay.addEventListener("click", closeSlider);
 
 });
-const form = document.getElementById("contactForm");
-const status = document.getElementById("formStatus");
+// const form = document.getElementById("contactForm");
+// const form = document.getElementById("contact-form");
+// const status = document.getElementById("formStatus");
 
-async function handleSubmit(event){
 
-event.preventDefault();
+// async function handleSubmit(event){
 
-const data = new FormData(event.target);
+// event.preventDefault();
 
-fetch(event.target.action,{
-method:form.method,
-body:data,
-headers:{'Accept':'application/json'}
-}).then(response=>{
+// const data = new FormData(event.target);
 
-if(response.ok){
-status.innerHTML="Message sent successfully.";
-form.reset();
-}else{
-status.innerHTML="Something went wrong.";
-}
+// fetch(event.target.action,{
+// method:form.method,
+// body:data,
+// headers:{'Accept':'application/json'}
+// }).then(response=>{
 
-}).catch(()=>{
-status.innerHTML="Network error.";
+// if(response.ok){
+// status.innerHTML="Message sent successfully.";
+// form.reset();
+// }else{
+// status.innerHTML="Something went wrong.";
+// }
+
+// }).catch(()=>{
+// status.innerHTML="Network error.";
+// });
+
+// }
+
+// form.addEventListener("submit",handleSubmit);
+/* =============================
+   GOOGLE SHEETS CONTACT FORM
+============================= */
+
+document.addEventListener("DOMContentLoaded", function () {
+
+  const form = document.getElementById("contact-form");
+
+  if (!form) return;
+
+  form.addEventListener("submit", async function (event) {
+
+    event.preventDefault();
+
+    const submitBtn = form.querySelector(".submit-btn");
+    const originalText = submitBtn.textContent;
+
+    submitBtn.textContent = "Sending...";
+    submitBtn.disabled = true;
+
+    const data = new FormData(form);
+
+    try {
+
+      await fetch(
+        "https://script.google.com/macros/s/AKfycbwLuQMDqp9ozi69_gRAXa8hy4SYvoSVpL3nL4fNxmlcZIujw64jjdYgEM2IRVOGut-rtA/exec",
+        {
+          method: "POST",
+          body: data,
+          mode: "no-cors",
+        },
+      );
+
+      form.reset();
+
+      submitBtn.textContent = "Submitted";
+
+      setTimeout(() => {
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+      }, 2000);
+
+    } catch (error) {
+
+      console.error("Google Sheets submission error:", error);
+
+      submitBtn.textContent = "Try Again";
+      submitBtn.disabled = false;
+
+    }
+
+  });
+
 });
 
-}
-
-form.addEventListener("submit",handleSubmit);
 /* =============================
    NAVBAR SCROLL EFFECT
 ============================= */

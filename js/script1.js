@@ -83,6 +83,67 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 /* =============================
+   CONTACT FORM SUBMIT
+============================= */
+
+document.addEventListener("DOMContentLoaded", function () {
+
+  const form = document.getElementById("contact-form");
+
+  if (!form) return;
+
+  const submitBtn = form.querySelector(".submit-btn");
+  const originalText = submitBtn ? submitBtn.textContent : "Submit";
+  const appsScriptUrl =
+    "https://script.google.com/macros/s/AKfycbwLuQMDqp9ozi69_gRAXa8hy4SYvoSVpL3nL4fNxmlcZIujw64jjdYgEM2IRVOGut-rtA/exec";
+
+  form.addEventListener("submit", async function (event) {
+    event.preventDefault();
+
+    if (!submitBtn) return;
+
+    submitBtn.textContent = "Sending...";
+    submitBtn.disabled = true;
+
+    const formData = new FormData(form);
+    const payload = {
+      name: formData.get("name") || "",
+      email: formData.get("email") || "",
+      company: formData.get("company") || "",
+      message: formData.get("message") || ""
+    };
+
+    try {
+      await fetch(appsScriptUrl, {
+        method: "POST",
+        body: new URLSearchParams(payload).toString(),
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        mode: "no-cors"
+      });
+
+      form.reset();
+      submitBtn.textContent = "Submitted";
+      submitBtn.classList.add("success");
+
+      setTimeout(() => {
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+        submitBtn.classList.remove("success");
+      }, 2200);
+
+    } catch (error) {
+      console.error("Contact form submission failed:", error);
+      submitBtn.textContent = "Try Again";
+      submitBtn.disabled = false;
+    }
+  });
+
+});
+
+
+/* =============================
    CARDS (NO ANIMATION)
 ============================= */
 
